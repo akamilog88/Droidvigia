@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <group android:checkableBehavior="single">
+    <item
+        android:id="@+id/nav_home_1"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="Inicio" />
+    <item
+        android:id="@+id/nav_home_2"
+        android:icon="@drawable/ic_settings_black_24dp"
+        android:title="Opciones" />
+  </group>
+      <item
+          android:id="@+id/nav_salir"
+          android:icon="@drawable/power_off"
+          android:title="Salir"/>
+</menu>
