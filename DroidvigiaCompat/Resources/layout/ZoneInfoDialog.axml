@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <EditText
+        android:minWidth="100dp"
+        android:minHeight="50dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/dialog_tb_zoneCode"
+        android:hint="Código"
+        android:inputType="phone"
+        android:numeric="integer"
+        android:phoneNumber="true" />
+    <EditText
+        android:minWidth="100dp"
+        android:minHeight="50dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/dialog_tb_zoneName"
+        android:hint="Nombre" />
+    <CheckBox
+        android:text="Aviso Inmediato"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/dialog_chk_zone_inmediate" />
+</LinearLayout>

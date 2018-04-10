@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="4dp"
+    android:background="#ffbadef2"
+    android:minWidth="25px"
+    android:minHeight="25px">
+    <TextView
+        android:text="Hora"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/lb_history_header1"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:textColor="#ff256400"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowColor="#000000"
+        android:shadowRadius="10"
+        android:textColorHighlight="#000000" />
+    <TextView
+        android:text="Particion"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/lb_history_header2"
+        android:layout_centerInParent="true"
+        android:layout_alignParentTop="true"
+        android:textColor="#ff256400" />
+    <TextView
+        android:text="Estado"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/lb_history_header3"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:textColor="#ff256400" />
+</RelativeLayout>
