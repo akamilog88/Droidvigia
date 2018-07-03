@@ -8,29 +8,63 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using DroidVIGIA.Utils;
+using DroidvigiaCompat.Utils;
 
-namespace DroidVIGIA
+
+using Android.Support.V7.App;
+using Android.Support.V4.View;
+using Android.Support.Design.Widget;
+using Android.Support.V4.Widget;
+
+namespace DroidvigiaCompat
 {
 	[Activity (Label = "Particiones")]			
-	public class PartitionManagmentActivity : ListActivity,IMenuItemOnMenuItemClickListener
+	public class PartitionManagmentActivity : AppCompatActivity,IMenuItemOnMenuItemClickListener
 	{
+
 		const int MENU_ITEM_CREATE_PARTITION = 1;
 		const int MENU_ITEM_DELETE_PARTITION = 2;
 		const int MENU_ITEM_EDIT_PARTITION = 3;
 		PartitionAdapter adapter;
 		int item_long_pressed_index=-1;
+
+        ListView listView;
+
 		protected override void OnCreate (Bundle bundle)
 		{
 			base.OnCreate (bundle);
-			var dal = new DAL ();
+            SetContentView(Resource.Layout.listview_shell_activity);
+
+             var toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+            if (toolbar != null)
+            {
+                SetSupportActionBar(toolbar);
+                SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+                SupportActionBar.SetHomeButtonEnabled(true);
+                SupportActionBar.SetDisplayShowTitleEnabled(false);
+            }
+
+            var dal = new DAL ();            
+
 			adapter =  new PartitionAdapter (this, dal.GetAllPartitions());
-			this.ListAdapter = adapter;
-			this.ListView.ItemLongClick += (sender, e) => {
+
+            this.listView = FindViewById<ListView>(Resource.Id.listview_shell);
+            this.listView.Adapter = adapter;            
+
+			this.listView.ItemLongClick += (sender, e) => {
 				item_long_pressed_index=e.Position;
 				e.Handled=false;
 			};
-			RegisterForContextMenu (this.ListView);			
+            this.listView.ItemClick += (o,e) =>{
+                Intent i = new Intent(this, typeof(ZonesListActivity));
+                i.PutExtra("PartitionId", adapter[e.Position].Id);
+                StartActivity(i);
+            };
+            toolbar.NavigationClick += (o, e) => {
+                OnBackPressed();
+            };
+
+            RegisterForContextMenu (this.listView);			
 		}
 		public override bool OnCreateOptionsMenu (IMenu menu)
 		{
@@ -49,20 +83,20 @@ namespace DroidVIGIA
 			menu.SetHeaderTitle(str0);
 			var item1= menu.Add(0, MENU_ITEM_EDIT_PARTITION,Android.Views.Menu.None, str1);
 			item1.SetOnMenuItemClickListener (this);
-			var item2= menu.Add(0, MENU_ITEM_DELETE_PARTITION, Android.Views.Menu.None, str2);				;
+			var item2= menu.Add(0, MENU_ITEM_DELETE_PARTITION, Android.Views.Menu.None, str2);			
 			item2.SetOnMenuItemClickListener (this);
 		}
 		public bool OnMenuItemClick (IMenuItem item)
 		{
 			DAL dal;
 			View view;
-			AlertDialog.Builder dialog;
+            Android.App.AlertDialog.Builder dialog;
 			switch(item.ItemId){
 			case ( MENU_ITEM_EDIT_PARTITION):
 				view = LayoutInflater.Inflate (Resource.Layout.PartitionInfoDialog,null);	
 				var tb_code_a= view.FindViewById<EditText>(Resource.Id.dialog_tb_partitionCode);
 				tb_code_a.Visibility= ViewStates.Gone;
-				dialog = new AlertDialog.Builder (this)
+				dialog = new Android.App.AlertDialog.Builder (this)
 					.SetPositiveButton ("Aceptar", new EventHandler<DialogClickEventArgs> ((object sender, DialogClickEventArgs e) =>{
 						var s = sender as Dialog;
 						var tb_name= s.FindViewById<EditText>(Resource.Id.dialog_tb_partitionName);
@@ -84,7 +118,7 @@ namespace DroidVIGIA
 					break;
 			case ( MENU_ITEM_CREATE_PARTITION):
 				view = LayoutInflater.Inflate (Resource.Layout.PartitionInfoDialog,null);				                                     
-				dialog = new AlertDialog.Builder (this)
+				dialog = new Android.App.AlertDialog.Builder (this)
 					.SetPositiveButton ("Crear", new EventHandler<DialogClickEventArgs> ((object sender, DialogClickEventArgs e) =>{
 						var s = sender as Dialog;
 						var tb_name= s.FindViewById<EditText>(Resource.Id.dialog_tb_partitionName);
@@ -106,13 +140,13 @@ namespace DroidVIGIA
 			return true;
 		}
 
-		protected override void OnListItemClick (ListView l, View v, int position, long id)
-		{
-			base.OnListItemClick (l, v, position, id);
-			Intent i = new Intent(this,typeof(ZonesListActivity));
-			i.PutExtra("PartitionId",adapter[position].Id);
-			StartActivity(i);
-		}
+		//protected override void OnListItemClick (ListView l, View v, int position, long id)
+		//{
+		//	base.OnListItemClick (l, v, position, id);
+		//	Intent i = new Intent(this,typeof(ZonesListActivity));
+		//	i.PutExtra("PartitionId",adapter[position].Id);
+		//	StartActivity(i);
+		//}
 		protected override void OnResume ()
 		{
 			base.OnResume ();

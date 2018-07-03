@@ -8,9 +8,9 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using DroidVIGIA.Utils;
+using DroidvigiaCompat.Utils;
 
-namespace DroidVIGIA
+namespace DroidvigiaCompat
 {
 	[Activity (Label = "Zonas")]			
 	public class ZonesListActivity : ListActivity,IMenuItemOnMenuItemClickListener

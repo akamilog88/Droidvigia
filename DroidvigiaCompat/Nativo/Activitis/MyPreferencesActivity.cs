@@ -8,15 +8,21 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using DroidVIGIA.Utils;
+using DroidvigiaCompat.Utils;
 using Android.Support.V4.Content;
 using Android.Telephony;
 
-namespace DroidVIGIA
+
+using Android.Support.V7.App;
+using Android.Support.V4.View;
+using Android.Support.Design.Widget;
+using Android.Support.V4.Widget;
+
+namespace DroidvigiaCompat
 {
 	[Activity (Label = "PreferencesActivity")]			
-	public class MyPreferencesActivity : Activity
-	{
+	public class MyPreferencesActivity : AppCompatActivity
+    {
 		const string OWNER_CONTACT_NUMBER="54466823";
 
 		public PreferencesModel prefmodel{ get; private set;}
@@ -39,8 +45,21 @@ namespace DroidVIGIA
 		{
 			base.OnCreate (bundle);
 			SetContentView (Resource.Layout.Preferences);
-			// Create your application here
-		}
+
+            var toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+            if (toolbar != null)
+            {
+                SetSupportActionBar(toolbar);
+                SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+                SupportActionBar.SetHomeButtonEnabled(true);
+                SupportActionBar.SetDisplayShowTitleEnabled(false);
+            }
+
+            toolbar.NavigationClick += (o, e) => {
+                OnBackPressed();
+            };
+            // Create your application here
+        }
 
 		protected override void OnResume ()
 		{

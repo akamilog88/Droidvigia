@@ -1,15 +1,19 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <group android:checkableBehavior="single">
+  <group android:checkableBehavior="single">  
     <item
-        android:id="@+id/nav_home_1"
-        android:icon="@drawable/ic_home_black_24dp"
-        android:title="Inicio" />
-    <item
-        android:id="@+id/nav_home_2"
+        android:id="@+id/nav_config"
         android:icon="@drawable/ic_settings_black_24dp"
-        android:title="Opciones" />
+        android:title="Configuración" />   
+    <item
+          android:id="@+id/nav_zones"
+          android:icon="@drawable/ic_settings_black_24dp"
+          android:title="Zonas" />
+    <item
+          android:id="@+id/nav_planif"
+          android:icon="@drawable/ic_settings_black_24dp"
+          android:title="Planificación" />
   </group>
       <item
           android:id="@+id/nav_salir"

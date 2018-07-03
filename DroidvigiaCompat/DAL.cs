@@ -61,9 +61,12 @@ namespace DroidvigiaCompat
 				bool exists = File.Exists (dbPath);
 				if (!exists){
 					//SqliteConnection.CreateFile (dbPath);
+                    
 					if(connection==null)
-						connection = new SqliteConnection ("Data Source=" + dbPath);
-					connection.Open ();	
+                        connection = new SqliteConnection("Data Source=" + dbPath);
+                    //connection = new SqliteConnection(dbPath);
+
+                    connection.Open ();	
 					foreach(string cmd in init_commands){
 						using (var c = connection.CreateCommand ()) {
 							c.CommandText = cmd;
@@ -75,10 +78,13 @@ namespace DroidvigiaCompat
 					exists = true;
 					PopulateDefaults();
 				}else{
-					connection = new SqliteConnection ("Data Source=" + dbPath);
-					connection.Open ();	
+                    connection = new SqliteConnection ("Data Source=" + dbPath);
+                    //connection = new SqliteConnection(dbPath);
+                    connection.Open ();	
 				}
-			}catch(Exception){}
+			}catch(Exception e){
+
+            }
 			finally{
 				if(connection!=null && connection.State!= ConnectionState.Closed)
 					connection.Close ();

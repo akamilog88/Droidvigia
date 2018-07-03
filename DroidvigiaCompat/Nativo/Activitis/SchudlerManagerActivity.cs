@@ -10,10 +10,16 @@ using Android.Views;
 using Android.Widget;
 using Android.Support.V4.App;
 
-namespace DroidVIGIA
+
+using Android.Support.V7.App;
+using Android.Support.V4.View;
+using Android.Support.Design.Widget;
+using Android.Support.V4.Widget;
+
+namespace DroidvigiaCompat
 {
 	[Activity (Label = "Planificador")]			
-	public class SchudlerManagerActivity : ListActivity,IMenuItemOnMenuItemClickListener	
+	public class SchudlerManagerActivity : AppCompatActivity, IMenuItemOnMenuItemClickListener	
 	{
 		const int MENU_ITEM_CREATE = 1;
 		const int MENU_ITEM_DELETE = 2;
@@ -21,30 +27,50 @@ namespace DroidVIGIA
 		int item_long_pressed_index=-1;
 		Android.Support.V4.App.DialogFragment partitions_dialog;
 
-		protected override void OnCreate (Bundle bundle)
+        ListView listView;
+        
+
+        protected override void OnCreate (Bundle bundle)
 		{
 			base.OnCreate (bundle);
-				
-		}
 
-		private void ItemLongPressed(object sender, AdapterView.ItemLongClickEventArgs e) {
-			item_long_pressed_index=e.Position;
-			e.Handled=false;
-		}
-		protected override void OnResume ()
-		{
-			base.OnResume ();
-			var dal = new DAL ();
-			adapter =  new SchuldeAdapter (this, dal.GetAllSchudles());
-			this.ListAdapter = adapter;
-			this.ListView.ItemLongClick += ItemLongPressed;
-			RegisterForContextMenu (this.ListView);		
-		}
+            SetContentView(Resource.Layout.listview_shell_activity);
+
+            var toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+            if (toolbar != null)
+            {
+                SetSupportActionBar(toolbar);
+                SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+                SupportActionBar.SetHomeButtonEnabled(true);
+                SupportActionBar.SetDisplayShowTitleEnabled(false);
+            }
+            var dal = new DAL();
+            adapter = new SchuldeAdapter(this, dal.GetAllSchudles());            
+
+            this.listView = FindViewById<ListView>(Resource.Id.listview_shell);
+            this.listView.Adapter = adapter;
+
+            this.listView.ItemClick += (o, e) => {
+                Intent i = new Intent(this, typeof(SchudleDataActivity));
+                i.PutExtra(SchudleDataActivity.SCHUDLE_ID_EXTRA, adapter[e.Position].Label);
+                StartActivity(i);
+            };
+
+            this.listView.ItemLongClick += (sender, e) => {
+                item_long_pressed_index = e.Position;
+                e.Handled = false;
+            };
+            toolbar.NavigationClick += (o, e) => {                
+                    OnBackPressed();                
+            };          
+
+           
+            RegisterForContextMenu(this.listView);
+        }        
 
 		protected override void OnPause ()
 		{
-			base.OnPause ();
-			this.ListView.ItemLongClick -= ItemLongPressed;
+			base.OnPause ();			
 		}
 		public override bool OnCreateOptionsMenu (IMenu menu)
 		{
@@ -86,16 +112,9 @@ namespace DroidVIGIA
 			Java.Lang.ICharSequence str0 = new Java.Lang.String("Opciones");	
 			Java.Lang.ICharSequence str2 = new Java.Lang.String("Eliminar");
 			menu.SetHeaderTitle(str0);		
-			var item2= menu.Add(0, MENU_ITEM_DELETE, Android.Views.Menu.None, str2);				;
+			var item2= menu.Add(0, MENU_ITEM_DELETE, Android.Views.Menu.None, str2);				
 			item2.SetOnMenuItemClickListener (this);
-		}
-		protected override void OnListItemClick (ListView l, View v, int position, long id)
-		{
-			base.OnListItemClick (l, v, position, id);
-			Intent i = new Intent(this,typeof(SchudleDataActivity));
-			i.PutExtra(SchudleDataActivity.SCHUDLE_ID_EXTRA,adapter[position].Label);
-			StartActivity(i);
-		}
+		}	
 	}
 }
 

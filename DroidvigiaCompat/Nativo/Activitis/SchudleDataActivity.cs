@@ -8,12 +8,17 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using DroidVIGIA.Utils;
+using DroidvigiaCompat.Utils;
 
-namespace DroidVIGIA
+using Android.Support.V7.App;
+using Android.Support.V4.View;
+using Android.Support.Design.Widget;
+using Android.Support.V4.Widget;
+
+namespace DroidvigiaCompat
 {
 	[Activity (Label = "NewSchudle")]			
-	public class SchudleDataActivity : Activity
+	public class SchudleDataActivity : AppCompatActivity
 	{
 		public const string SCHUDLE_ID_EXTRA="label";
 		private string schudle_label="";
@@ -85,7 +90,7 @@ namespace DroidVIGIA
 
 		}
 		private void OnPickParticionesClick (object sender, EventArgs e){	
-			var dialog = new AlertDialog.Builder (this)
+			var dialog = new Android.Support.V7.App.AlertDialog.Builder (this)
 			.SetTitle ("Particiones")
 					.SetMultiChoiceItems (Partitions.ToArray(), selected_partitions, new EventHandler<DialogMultiChoiceClickEventArgs> ((object o, DialogMultiChoiceClickEventArgs args) => {
 						if(args.IsChecked)
@@ -96,7 +101,7 @@ namespace DroidVIGIA
 			dialog.Show ();
 		}
 		private void OnPickDays (object sender, EventArgs e){
-			var dialog = new AlertDialog.Builder (this)
+			var dialog = new Android.Support.V7.App.AlertDialog.Builder (this)
 				.SetTitle ("Repetir Dia")
 					.SetMultiChoiceItems (days, selected_days, new EventHandler<DialogMultiChoiceClickEventArgs> ((object o, DialogMultiChoiceClickEventArgs args) => {
 						if(args.IsChecked)
@@ -122,7 +127,8 @@ namespace DroidVIGIA
 				DAL dal = new DAL ();
 				dal.NewSchudle (s);
 				Toast.MakeText (this, "Tarea Creada", ToastLength.Short);
-				this.MoveTaskToBack (true);
+                //this.MoveTaskToBack (true);
+                this.OnBackPressed();
 			}
 		}	
 		String PartitionsStringFromList(){
