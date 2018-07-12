@@ -19,7 +19,7 @@ namespace DroidToneDecoder
 		public const int TOKEN_DELIMITER= DTMFConstanst.DSTAR;
 		public const int MAX_CHARS = 6;
 		readonly TimeSpan AUTO_DELIMITER_TIMESPAN =new TimeSpan(0,0,0,3,0);
-		readonly TimeSpan MAX_BUILD_TIMESPAN = new TimeSpan(0,0,0,8,0);
+		readonly TimeSpan MAX_BUILD_TIMESPAN = new TimeSpan(0,0,0,6,0);
 
 		private string current_token="";
 		private int last_dtmf_const=-1;

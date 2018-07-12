@@ -132,6 +132,10 @@ namespace DroidvigiaCompat
                     StartActivity(i);
                     break;
                 case 3:
+                    i = new Intent(this, typeof(HistoryManagmentActivity));
+                    StartActivity(i);
+                    break;
+                case 4:
                     var service = Binder.GetService();
                     service.ForceStop();
                     Finish();
@@ -151,7 +155,8 @@ namespace DroidvigiaCompat
 			IMenuItem item1= menu.Add (0,0,0,"Configuracion");
 			IMenuItem item2= menu.Add (0,1,1,"Zonas");
 			IMenuItem item3= menu.Add (0,2,2,"Planificacion");
-            IMenuItem item4 = menu.Add(0,3, 3, "Salir");
+            IMenuItem item4 = menu.Add(0, 3, 3, "Historial");
+            IMenuItem item5 = menu.Add(0,4, 4, "Salir");
             return base.OnCreateOptionsMenu (menu);
 		}
 
@@ -171,6 +176,9 @@ namespace DroidvigiaCompat
                 case 3:
                      ListItemClicked(3);
                      break;
+                case 4:
+                    ListItemClicked(4);
+                    break;
             }
 			return base.OnOptionsItemSelected (item);
 		}	

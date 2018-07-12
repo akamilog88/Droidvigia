@@ -1,7 +1,7 @@
 using System;
 
 namespace DroidToneDecoder
-{
+{    
 	public class DTMFConstanst
 	{
 
@@ -93,6 +93,8 @@ namespace DroidToneDecoder
 			"+C11", "+C12", "KP1+", "KP2+", "+ST",
 			"2400", "2600", "2400+2600",
 			"DIALTONE", "RING", "BUSY","SILENCE" };
+
+
 		public const double RANGE = 0.1;           /* any thing higher than RANGE*peak is "on" */
 		public const double THRESH = 5000;         /* minimum level for the loudest tone */
 		//public const double FLUSH_TIME = 100;       /* 100 frames = 3 seconds */

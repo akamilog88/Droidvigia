@@ -16,15 +16,17 @@ using Android.Telephony;
 using Android.Media;
 using DroidToneDecoder;
 using DroidvigiaCompat.Utils;
+using Wpam.Recognizer;
 
 namespace DroidvigiaCompat
 {
 	[Service]
-	public class DetectorService:Service,TextToSpeech.IOnInitListener,ISharedPreferencesOnSharedPreferenceChangeListener, AudioManager.IOnAudioFocusChangeListener
+	public class DetectorService:Service,TextToSpeech.IOnInitListener,ISharedPreferencesOnSharedPreferenceChangeListener, AudioManager.IOnAudioFocusChangeListener,IControllerClient
 	{
 		//DTMFTokenParser parser;
-		private MyPhoneStateListener phone_state_listener;	
-		private DTMFClipListener dtmfClipListener;
+		private MyPhoneStateListener phone_state_listener;
+        //private DTMFClipListener dtmfClipListener;
+        private DTMFTokenParser tokenParser;
 		private AudioClipRecorder clipRecorder;
 		ToneDetectedReciver tone_detected_reciver;
 		private Task recorderThread;
@@ -39,7 +41,12 @@ namespace DroidvigiaCompat
 		//bool modoComplemento;
 		System.Threading.Timer notification_timer;
 
-		bool notificando;
+        Controller _jdtmfController;
+
+        public event EventHandler<DTMFTokenBuildedEventArgs> NewToken;
+        public event EventHandler<DTMFDetectedArgs> NewKey;
+
+        bool notificando;
 		public bool Notificando{ get{return notificando;}
 			private set{
 				if(value != notificando){
@@ -89,7 +96,9 @@ namespace DroidvigiaCompat
 
 		public bool Detecting{ get; private set;}
 
-		public DetectorService ()
+        public int AudioSource => throw new NotImplementedException();
+
+        public DetectorService ()
 		{
 		
 		}
@@ -104,7 +113,8 @@ namespace DroidvigiaCompat
 				notification_timer=null;					
 			}		
 			NotificationManager n_mngr = (NotificationManager)GetSystemService (Service.NotificationService);
-			n_mngr.CancelAll ();	
+			n_mngr.CancelAll ();
+            Detecting = false;
 			initialized = false;
 		}
 
@@ -113,8 +123,10 @@ namespace DroidvigiaCompat
 			StopSelf ();
 		}
 		public void RestartDetect(){
-			StopDetect ();
-			StartDetect ();
+            //StopDetect ();
+            //StartDetect ();
+            Realese();
+            Init();
 		}
 
 		private void Init(){
@@ -139,125 +151,174 @@ namespace DroidvigiaCompat
 		
 			Schudled_CallBack = prefs_model.Schudled_Call;
 
-			if((prefs_model.Teclado_Enabled || prefs_model.Ready) && !Detecting){		
+            if (_jdtmfController == null)
+                _jdtmfController = new Controller(this);
+
+            if ((prefs_model.Teclado_Enabled || prefs_model.Ready) && !Detecting){		
 				StartDetect ();
 			}
-		}
 
-		public void StartDetect(){		
-			dtmfClipListener = new DTMFClipListener (true);
-			dtmfClipListener.DetectSilence = true;	
-			//dtmfClipListener.ToneDetected += OnToneDetected;
+            tokenParser = new DTMFTokenParser();
+            tokenParser.NewToken += OnNewToken;
 
-			//if(!modoComplemento)
-			dtmfClipListener.NewToken += OnNewToken;
-			//else
-			//	dtmfClipListener.NewToken += OnNewTokenModoComplemento;
-			Detecting = true;
-			recorderThread = new Task(
-				()=>
-				{
-				clipRecorder = new AudioClipRecorder(dtmfClipListener,recorderThread);
-				clipRecorder.startRecording (AudioClipRecorder.RECORDER_SAMPLERATE_CD, Android.Media.Encoding.Pcm16bit);
-			},TaskCreationOptions.LongRunning);
-			recorderThread.Start();
-		}
+        }
+        public void StartDetect()
+        {            
+            Start();
+        }
+        public void StopDetect()
+        {
+            Stop();
+        }
+        #region JDTMF Controller START/STOP
+        public void OnKey(char p0)
+        {
 
-		public void StopDetect(){
-			try{
-			//if (modoComplemento)
-				//dtmfClipListener.NewToken -= OnNewTokenModoComplemento;
-			//else
-				dtmfClipListener.NewToken -= OnNewToken;
-			}catch(Exception){;}
-			dtmfClipListener = null;
-			tone_detected_reciver = null;
-			Detecting = false;
-			if(clipRecorder!=null)
-				clipRecorder.stopRecording ();
-			recorderThread = null;
-			
-		}
-		public void OnAudioFocusChange (AudioFocus focusChange)
+            tokenParser.Digest(DTMFDetectedArgs.ToneCodeFromKey(p0));
+            if (NewKey != null)
+                NewKey.BeginInvoke(null, new DTMFDetectedArgs(p0, 0.064),null,null);
+
+        }
+
+        public void Start()
+        {
+            if (!_jdtmfController.IsStarted) {
+                _jdtmfController.ChangeState();
+                Detecting = true;
+            }               
+        }
+
+        public void Stop()
+        {
+            if (_jdtmfController.IsStarted)
+            {
+                _jdtmfController.ChangeState();
+                Detecting = false;
+            }
+        }
+        #endregion
+
+        #region DTMFCLIPLISTENER Start/Stop
+        //public void StartDetect(){		
+        //	dtmfClipListener = new DTMFClipListener (true);
+        //	dtmfClipListener.DetectSilence = true;	
+        //	//dtmfClipListener.ToneDetected += OnToneDetected;
+
+        //	//if(!modoComplemento)
+        //	dtmfClipListener.NewToken += OnNewToken;
+        //	//else
+        //	//	dtmfClipListener.NewToken += OnNewTokenModoComplemento;
+        //	Detecting = true;
+        //	recorderThread = new Task(
+        //		()=>
+        //		{
+        //		clipRecorder = new AudioClipRecorder(dtmfClipListener,recorderThread);
+        //		clipRecorder.startRecording (AudioClipRecorder.RECORDER_SAMPLERATE_CD, Android.Media.Encoding.Pcm16bit);
+        //	},TaskCreationOptions.LongRunning);
+        //	recorderThread.Start();
+        //}
+
+        //public void StopDetect(){
+        //	try{
+        //	//if (modoComplemento)
+        //		//dtmfClipListener.NewToken -= OnNewTokenModoComplemento;
+        //	//else
+        //		dtmfClipListener.NewToken -= OnNewToken;
+        //	}catch(Exception){;}
+        //	dtmfClipListener = null;
+        //	tone_detected_reciver = null;
+        //	Detecting = false;
+        //	if(clipRecorder!=null)
+        //		clipRecorder.stopRecording ();
+        //	recorderThread = null;
+
+        //}
+        #endregion
+        public void OnAudioFocusChange (AudioFocus focusChange)
 		{
 
 		}
-		#region implemented abstract members of Service
-		public override IBinder OnBind (Intent intent)
-		{
-			return new DetectorServiceBinder(this);
-		}
-		private void NotifyNewEvent(HistoryItem h){
-			if (NewHistoryData != null)
-				NewHistoryData.BeginInvoke (this, new ActionRegisteredEventArgs (h), null, null);
-		}
-	  
-		private void OnNewToken(object sender, DTMFTokenBuildedEventArgs edt){
-			lock(sync_object){
-				DAL dal = new DAL ();
-				List<Partition> particiones = dal.GetAllPartitions ();	
-				if(edt.Token == prefs_model.Pin){
-					prefs_model.Ready=!prefs_model.Ready;
+        private void OnNewToken(object sender, DTMFTokenBuildedEventArgs edt)
+        {
+            lock (sync_object)
+            {
+                DAL dal = new DAL();
+                List<Partition> particiones = dal.GetAllPartitions();
+                if (edt.Token == prefs_model.Pin)
+                {
+                    prefs_model.Ready = !prefs_model.Ready;
 
-					if(prefs_model.Ready){
-						/*if(speech_engine_inited)
+                    if (prefs_model.Ready)
+                    {
+                        /*if(speech_engine_inited)
 									speech_synt.Speak("Alarma activada",QueueMode.Flush,null);*/
-						particiones.ForEach ((p)=>dal.UpdatePartitionState(p.Id,true));
-						NotifyEvent ("Alarma Activada","Todas las particiones activadas");
-						var h = new HistoryItem {
-							Time=DateTime.Now,
-							State=Action.ACTION_ID_ACTIVATED,
-							PartitionName= "TODAS",
-							Detail="TODAS LAS PARTICIONES ACTIVADAS"
-						};
-						dal.RegiterEvent(h);
-						NotifyNewEvent (h);
-						//Ready=true;
-					}else{
-						/*if(speech_engine_inited)
-									speech_synt.Speak("Alarma desactivada",QueueMode.Flush,null);*/	
-						particiones.ForEach ((p)=>dal.UpdatePartitionState(p.Id,false));
-						NotifyEvent ("Alarma Desactivada","Todas las particiones desactivadas");
-						var h = new HistoryItem {
-							Time=DateTime.Now,
-							State=Action.ACTION_ID_DESACTIVATED,
-							PartitionName= "TODAS",
-							Detail="TODAS LAS PARTICIONES DESACTIVADAS"
-						};
-						dal.RegiterEvent (h);
-						NotifyNewEvent (h);
-					}			
-				}else{			
-					var p = particiones.Find((part)=>part.Code == edt.Token);			
-					if (p != null) 
-					{				
-						p.Zones = dal.GetPartitionsZones (p.Id);
-						if (p.Activated) {
-							NotifyEvent ("Particion Desactivada", "Particion " + p.Name + " Desactivada");
-							var h = new HistoryItem { Time=DateTime.Now, State=Action.ACTION_ID_DESACTIVATED, PartitionName=p.Name, Detail="" };
-							dal.RegiterEvent(h);
-							NotifyNewEvent (h);
-							p.Activated = false;
-							dal.UpdatePartitionState (p.Id, false);
-							if (particiones.Find ((part)=>part.Activated) == null)
-								prefs_model.Ready = false;
-						} else {								
-							NotifyEvent ("Particion Activada", "Particion " + p.Name + " Activada");
-							p.Activated = true;
-							dal.UpdatePartitionState (p.Id, false);
-							var h = new HistoryItem { Time=DateTime.Now, State=Action.ACTION_ID_ACTIVATED, PartitionName=p.Name, Detail="" };
-							dal.RegiterEvent(h);
-							NotifyNewEvent (h);
-							prefs_model.Ready = false;
-						}						
-					}else{					
-						var z = (edt.Token.All(cp=>cp==edt.Token [0]))?dal.GetZoneByCode (edt.Token[0].ToString()):null;
-						if (z != null ) 
-						{
-							p = particiones.Find((part)=>part.Id == z.PartitionId);
-							if (!z.Fired && p.Activated)
-							{
-								if ((DateTime.Now - p.ChangeStateTime) >= new TimeSpan( 0,0,prefs_model.Time_To_GO))
+                        particiones.ForEach((p) => dal.UpdatePartitionState(p.Id, true));
+                        NotifyEvent("Alarma Activada", "Todas las particiones activadas");
+                        var h = new HistoryItem
+                        {
+                            Time = DateTime.Now,
+                            State = Action.ACTION_ID_ACTIVATED,
+                            PartitionName = "TODAS",
+                            Detail = "TODAS LAS PARTICIONES ACTIVADAS"
+                        };
+                        dal.RegiterEvent(h);
+                        NotifyNewEvent(h);
+                        //Ready=true;
+                    }
+                    else
+                    {
+                        /*if(speech_engine_inited)
+									speech_synt.Speak("Alarma desactivada",QueueMode.Flush,null);*/
+                        particiones.ForEach((p) => dal.UpdatePartitionState(p.Id, false));
+                        NotifyEvent("Alarma Desactivada", "Todas las particiones desactivadas");
+                        var h = new HistoryItem
+                        {
+                            Time = DateTime.Now,
+                            State = Action.ACTION_ID_DESACTIVATED,
+                            PartitionName = "TODAS",
+                            Detail = "TODAS LAS PARTICIONES DESACTIVADAS"
+                        };
+                        dal.RegiterEvent(h);
+                        NotifyNewEvent(h);
+                    }
+                }
+                else
+                {
+                    var p = particiones.Find((part) => part.Code == edt.Token);
+                    if (p != null)
+                    {
+                        p.Zones = dal.GetPartitionsZones(p.Id);
+                        if (p.Activated)
+                        {
+                            NotifyEvent("Particion Desactivada", "Particion " + p.Name + " Desactivada");
+                            var h = new HistoryItem { Time = DateTime.Now, State = Action.ACTION_ID_DESACTIVATED, PartitionName = p.Name, Detail = "" };
+                            dal.RegiterEvent(h);
+                            NotifyNewEvent(h);
+                            p.Activated = false;
+                            dal.UpdatePartitionState(p.Id, false);
+                            if (particiones.Find((part) => part.Activated) == null)
+                                prefs_model.Ready = false;
+                        }
+                        else
+                        {
+                            NotifyEvent("Particion Activada", "Particion " + p.Name + " Activada");
+                            p.Activated = true;
+                            dal.UpdatePartitionState(p.Id, false);
+                            var h = new HistoryItem { Time = DateTime.Now, State = Action.ACTION_ID_ACTIVATED, PartitionName = p.Name, Detail = "" };
+                            dal.RegiterEvent(h);
+                            NotifyNewEvent(h);
+                            prefs_model.Ready = false;
+                        }
+                    }
+                    else
+                    {
+                        var z = (edt.Token.All(cp => cp == edt.Token[0])) ? dal.GetZoneByCode(edt.Token[0].ToString()) : null;
+                        if (z != null)
+                        {
+                            p = particiones.Find((part) => part.Id == z.PartitionId);
+                            if (!z.Fired && p.Activated)
+                            {
+                                if ((DateTime.Now - p.ChangeStateTime) >= new TimeSpan( 0,0,prefs_model.Time_To_GO))
 								{
 									var due_time =(z.Inmediate ? 0 : prefs_model.Time_To_IN * 1000);
 									var timer = new System.Threading.Timer ((o)=>{
@@ -281,12 +342,26 @@ namespace DroidvigiaCompat
 										}
 									},new Partition{Id=p.Id,Name=p.Name,Activated=p.Activated,ChangeStateTime=p.ChangeStateTime,Zones=new List<Zone>{z}} ,due_time, -1);
 								} 
-							} 
-						}
-					}
-				}
-			}
+                            }
+                        }
+                    }
+                }
+            }
+            if (NewToken != null)
+                NewToken.BeginInvoke(null, edt, null, null);
+        }
+
+        #region implemented abstract members of Service
+        public override IBinder OnBind (Intent intent)
+		{
+			return new DetectorServiceBinder(this);
 		}
+		private void NotifyNewEvent(HistoryItem h){
+			if (NewHistoryData != null)
+				NewHistoryData.BeginInvoke (this, new ActionRegisteredEventArgs (h), null, null);
+		}
+	  
+		
 		void NotifyEvent(string display,string message){
 			notification.Defaults |= NotificationDefaults.Sound;
 			notification.SetLatestEventInfo (this, display,message, notification_pendingIntent);
@@ -326,7 +401,7 @@ namespace DroidvigiaCompat
 		}
 
 		#endregion
-	
+	    //Speech Recognition Engine Init
 		public void OnInit (OperationResult status)
 		{
 			//if (OperationResult.Success == status)
@@ -348,8 +423,9 @@ namespace DroidvigiaCompat
 					};				
 					dal.RegiterEvent (h);
 					NotifyNewEvent (h);
-					StopDetect ();
-					StartDetect ();
+                    //StopDetect ();
+                    //StartDetect ();
+                    RestartDetect();
 				} else {
 					NotifyEvent ("Alarma Desactivada","");
 					//dal.DesactivateAllPartitions ();
@@ -373,8 +449,10 @@ namespace DroidvigiaCompat
 				StopSelf ();
 			}
 		}
-	}
-	public class DetectorServiceBinder:Binder
+      
+    }
+    #region IServiceConnection implementation
+    public class DetectorServiceBinder:Binder
 	{
 		private DetectorService _service;
 		public DetectorServiceBinder (DetectorService service)
@@ -385,7 +463,8 @@ namespace DroidvigiaCompat
 			return _service;
 		}
 	}
-	public class DetectorServiceConnection:Java.Lang.Object,IServiceConnection
+   
+    public class DetectorServiceConnection:Java.Lang.Object,IServiceConnection
 	{
 		private IDetectorServiceBinderClient binderClient;
 		public event EventHandler<EventArgs> BindComplete;
@@ -396,7 +475,7 @@ namespace DroidvigiaCompat
 			binderClient = client;	
 		}
 
-		#region IServiceConnection implementation
+		
 
 		public void OnServiceConnected (ComponentName name, IBinder service)
 		{
@@ -417,9 +496,10 @@ namespace DroidvigiaCompat
 			binderClient.isBound = false;
 			binderClient = null;
 		}
-		#endregion
+		
 	}
-	public class MyPhoneStateListener  : PhoneStateListener,IDetectorServiceBinderClient {
+    #endregion
+    public class MyPhoneStateListener  : PhoneStateListener,IDetectorServiceBinderClient {
 		private Context context;
 		private CallState _last_CallState;
 		public bool isBound { get; set;}

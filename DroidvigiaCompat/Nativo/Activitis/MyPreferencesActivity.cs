@@ -109,6 +109,12 @@ namespace DroidvigiaCompat
 
 			var tb_appStatus = FindViewById<TextView> (Resource.Id.tb_appStatus);
 			tb_appStatus.Text=(!LicenseUtility.IsValidSerial (prefmodel.Serial, prefmodel.GetInfoForRequest (this)) ? GetString( Resource.String.tb_appStatus) + ": No Registrada." : GetString( Resource.String.tb_appStatus) + ": Registrada.");
+
+            var bt_debug = FindViewById<Button>(Resource.Id.bt_debug);
+            bt_debug.Click += (s,e) => {
+                Intent i = new Intent(this, typeof(DebugActivity));
+                StartActivity(i);
+            };
 		}
 
 		private void OnCheckedChanged(object sender, CompoundButton.CheckedChangeEventArgs e){

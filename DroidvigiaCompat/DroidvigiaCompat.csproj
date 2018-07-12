@@ -134,6 +134,8 @@
     <Compile Include="Model\PropertyChangedEventArgs.cs" />
     <Compile Include="Model\Schudle.cs" />
     <Compile Include="Model\Zone.cs" />
+    <Compile Include="Nativo\Activitis\DebugActivity.cs" />
+    <Compile Include="Nativo\Activitis\HistoryManagmentActivity.cs" />
     <Compile Include="Nativo\Activitis\MainActivity.cs" />
     <Compile Include="Nativo\Activitis\MyPreferencesActivity.cs" />
     <Compile Include="Nativo\Activitis\PartitionManagmentActivity.cs" />
@@ -166,10 +168,6 @@
     <AndroidResource Include="Resources\values-v21\styles.xml" />
     <AndroidResource Include="Resources\layout\toolbar.axml" />
     <AndroidResource Include="Resources\values\dimens.xml" />
-    <AndroidResource Include="Resources\layout\fragment1.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-    <AndroidResource Include="Resources\layout\fragment2.axml" />
     <AndroidResource Include="Resources\layout\main_compat.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -189,6 +187,12 @@
     <AndroidResource Include="Resources\layout\HistoryHeader.axml" />
     <AndroidResource Include="Resources\layout\Main.axml" />
     <AndroidResource Include="Resources\layout\listview_shell_activity.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\DebugActivityLayout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\HistoryManagmentLayout.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
@@ -240,6 +244,12 @@
   <ItemGroup>
     <Folder Include="Nativo\Fragments\" />
     <Folder Include="Nativo\Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\DroidToneDecoder JavaInline\JDtmfBindingLib\JDtmfBindingLib.csproj">
+      <Project>{a5ece9f0-b826-4eeb-9100-b1c920564bdb}</Project>
+      <Name>JDtmfBindingLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

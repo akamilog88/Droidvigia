@@ -35,7 +35,7 @@ namespace DroidvigiaCompat
 			base.OnCreate (bundle);
             SetContentView(Resource.Layout.listview_shell_activity);
 
-             var toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+            var toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             if (toolbar != null)
             {
                 SetSupportActionBar(toolbar);

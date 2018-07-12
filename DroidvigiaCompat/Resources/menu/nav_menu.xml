@@ -14,6 +14,10 @@
           android:id="@+id/nav_planif"
           android:icon="@drawable/ic_settings_black_24dp"
           android:title="Planificación" />
+    <item
+         android:id="@+id/nav_history"
+         android:icon="@drawable/ic_settings_black_24dp"
+         android:title="Historial" />
   </group>
       <item
           android:id="@+id/nav_salir"

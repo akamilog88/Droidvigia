@@ -545,7 +545,26 @@ namespace DroidvigiaCompat
 				connection.Close ();
 			}
 		}
-		public List<Zone> GetPartitionsZones(int PartitionId){
+
+        public void ClearHistory()
+        {
+            try
+            {
+                connection.Open();
+                using (var c = connection.CreateCommand())
+                {
+                    c.CommandText = "Delete from History";
+                    c.CommandType = CommandType.Text;                   
+                    c.ExecuteNonQuery();
+                }
+            }
+            catch (Exception) { }
+            finally
+            {
+                connection.Close();
+            }
+        }
+        public List<Zone> GetPartitionsZones(int PartitionId){
 			List<Zone> result = new List<Zone>();
 			try{
 				connection.Open();
