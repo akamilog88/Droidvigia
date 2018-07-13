@@ -144,6 +144,7 @@
     <Compile Include="Nativo\Activitis\ZonesListActivity.cs" />
     <Compile Include="Nativo\Adapters\HistoryGridAdapter.cs" />
     <Compile Include="Nativo\Adapters\PartitionAdapter.cs" />
+    <Compile Include="Nativo\Adapters\ReciclerHistoryAdapter.cs" />
     <Compile Include="Nativo\Adapters\SchudleAdapter.cs" />
     <Compile Include="Nativo\Adapters\ZonesAdapter.cs" />
     <Compile Include="Nativo\BroadcastReciver\SchuldeReciver.cs" />
@@ -193,6 +194,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\HistoryManagmentLayout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\ReciclerHistoryItem.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

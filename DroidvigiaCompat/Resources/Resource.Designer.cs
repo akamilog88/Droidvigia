@@ -2313,8 +2313,8 @@ namespace DroidvigiaCompat
 			// aapt resource value: 0x7f070044
 			public const int activity_chooser_view_content = 2131165252;
 			
-			// aapt resource value: 0x7f0700d7
-			public const int activity_lv_zones = 2131165399;
+			// aapt resource value: 0x7f0700da
+			public const int activity_lv_zones = 2131165402;
 			
 			// aapt resource value: 0x7f07001e
 			public const int add = 2131165214;
@@ -2448,23 +2448,23 @@ namespace DroidvigiaCompat
 			// aapt resource value: 0x7f07007d
 			public const int design_navigation_view = 2131165309;
 			
-			// aapt resource value: 0x7f0700d3
-			public const int dialog_bt_aceptar = 2131165395;
-			
 			// aapt resource value: 0x7f0700d6
-			public const int dialog_chk_zone_inmediate = 2131165398;
+			public const int dialog_bt_aceptar = 2131165398;
+			
+			// aapt resource value: 0x7f0700d9
+			public const int dialog_chk_zone_inmediate = 2131165401;
+			
+			// aapt resource value: 0x7f0700d5
+			public const int dialog_rbt_empresa = 2131165397;
+			
+			// aapt resource value: 0x7f0700d4
+			public const int dialog_rbt_particular = 2131165396;
+			
+			// aapt resource value: 0x7f0700d3
+			public const int dialog_rg_tipCliente = 2131165395;
 			
 			// aapt resource value: 0x7f0700d2
-			public const int dialog_rbt_empresa = 2131165394;
-			
-			// aapt resource value: 0x7f0700d1
-			public const int dialog_rbt_particular = 2131165393;
-			
-			// aapt resource value: 0x7f0700d0
-			public const int dialog_rg_tipCliente = 2131165392;
-			
-			// aapt resource value: 0x7f0700cf
-			public const int dialog_tb_clientName = 2131165391;
+			public const int dialog_tb_clientName = 2131165394;
 			
 			// aapt resource value: 0x7f0700b3
 			public const int dialog_tb_partitionCode = 2131165363;
@@ -2472,11 +2472,11 @@ namespace DroidvigiaCompat
 			// aapt resource value: 0x7f0700b4
 			public const int dialog_tb_partitionName = 2131165364;
 			
-			// aapt resource value: 0x7f0700d4
-			public const int dialog_tb_zoneCode = 2131165396;
+			// aapt resource value: 0x7f0700d7
+			public const int dialog_tb_zoneCode = 2131165399;
 			
-			// aapt resource value: 0x7f0700d5
-			public const int dialog_tb_zoneName = 2131165397;
+			// aapt resource value: 0x7f0700d8
+			public const int dialog_tb_zoneName = 2131165400;
 			
 			// aapt resource value: 0x7f070012
 			public const int disableHome = 2131165202;
@@ -2601,8 +2601,8 @@ namespace DroidvigiaCompat
 			// aapt resource value: 0x7f07008e
 			public const int lv_history = 2131165326;
 			
-			// aapt resource value: 0x7f0700d9
-			public const int masked = 2131165401;
+			// aapt resource value: 0x7f0700dc
+			public const int masked = 2131165404;
 			
 			// aapt resource value: 0x7f0700a2
 			public const int media_actions = 2131165346;
@@ -2616,23 +2616,23 @@ namespace DroidvigiaCompat
 			// aapt resource value: 0x7f070019
 			public const int multiply = 2131165209;
 			
-			// aapt resource value: 0x7f0700da
-			public const int nav_config = 2131165402;
-			
 			// aapt resource value: 0x7f0700dd
-			public const int nav_history = 2131165405;
+			public const int nav_config = 2131165405;
 			
-			// aapt resource value: 0x7f0700dc
-			public const int nav_planif = 2131165404;
+			// aapt resource value: 0x7f0700e0
+			public const int nav_history = 2131165408;
 			
-			// aapt resource value: 0x7f0700de
-			public const int nav_salir = 2131165406;
+			// aapt resource value: 0x7f0700df
+			public const int nav_planif = 2131165407;
+			
+			// aapt resource value: 0x7f0700e1
+			public const int nav_salir = 2131165409;
 			
 			// aapt resource value: 0x7f070091
 			public const int nav_view = 2131165329;
 			
-			// aapt resource value: 0x7f0700db
-			public const int nav_zones = 2131165403;
+			// aapt resource value: 0x7f0700de
+			public const int nav_zones = 2131165406;
 			
 			// aapt resource value: 0x7f07007c
 			public const int navigation_header_container = 2131165308;
@@ -2901,6 +2901,15 @@ namespace DroidvigiaCompat
 			// aapt resource value: 0x7f0700c2
 			public const int tv_delay_to_ready = 2131165378;
 			
+			// aapt resource value: 0x7f0700d0
+			public const int tv_history_item_Event = 2131165392;
+			
+			// aapt resource value: 0x7f0700d1
+			public const int tv_history_item_details = 2131165393;
+			
+			// aapt resource value: 0x7f0700cf
+			public const int tv_history_item_time = 2131165391;
+			
 			// aapt resource value: 0x7f070009
 			public const int up = 2131165193;
 			
@@ -2913,8 +2922,8 @@ namespace DroidvigiaCompat
 			// aapt resource value: 0x7f07000e
 			public const int view_offset_helper = 2131165198;
 			
-			// aapt resource value: 0x7f0700d8
-			public const int visible = 2131165400;
+			// aapt resource value: 0x7f0700db
+			public const int visible = 2131165403;
 			
 			// aapt resource value: 0x7f070027
 			public const int withText = 2131165223;
@@ -3183,28 +3192,31 @@ namespace DroidvigiaCompat
 			public const int Preferences = 2130903107;
 			
 			// aapt resource value: 0x7f030044
-			public const int select_dialog_item_material = 2130903108;
+			public const int ReciclerHistoryItem = 2130903108;
 			
 			// aapt resource value: 0x7f030045
-			public const int select_dialog_multichoice_material = 2130903109;
+			public const int select_dialog_item_material = 2130903109;
 			
 			// aapt resource value: 0x7f030046
-			public const int select_dialog_singlechoice_material = 2130903110;
+			public const int select_dialog_multichoice_material = 2130903110;
 			
 			// aapt resource value: 0x7f030047
-			public const int support_simple_spinner_dropdown_item = 2130903111;
+			public const int select_dialog_singlechoice_material = 2130903111;
 			
 			// aapt resource value: 0x7f030048
-			public const int toolbar = 2130903112;
+			public const int support_simple_spinner_dropdown_item = 2130903112;
 			
 			// aapt resource value: 0x7f030049
-			public const int UserInfoDialog = 2130903113;
+			public const int toolbar = 2130903113;
 			
 			// aapt resource value: 0x7f03004a
-			public const int ZoneInfoDialog = 2130903114;
+			public const int UserInfoDialog = 2130903114;
 			
 			// aapt resource value: 0x7f03004b
-			public const int Zones = 2130903115;
+			public const int ZoneInfoDialog = 2130903115;
+			
+			// aapt resource value: 0x7f03004c
+			public const int Zones = 2130903116;
 			
 			static Layout()
 			{

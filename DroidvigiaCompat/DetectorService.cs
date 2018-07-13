@@ -177,7 +177,6 @@ namespace DroidvigiaCompat
             tokenParser.Digest(DTMFDetectedArgs.ToneCodeFromKey(p0));
             if (NewKey != null)
                 NewKey.BeginInvoke(null, new DTMFDetectedArgs(p0, 0.064),null,null);
-
         }
 
         public void Start()
@@ -287,11 +286,13 @@ namespace DroidvigiaCompat
                     var p = particiones.Find((part) => part.Code == edt.Token);
                     if (p != null)
                     {
+                        string detail = "";
                         p.Zones = dal.GetPartitionsZones(p.Id);
                         if (p.Activated)
                         {
+                            detail = "Particion Desactivada:" + "Particion " + p.Name + " Desactivada";
                             NotifyEvent("Particion Desactivada", "Particion " + p.Name + " Desactivada");
-                            var h = new HistoryItem { Time = DateTime.Now, State = Action.ACTION_ID_DESACTIVATED, PartitionName = p.Name, Detail = "" };
+                            var h = new HistoryItem { Time = DateTime.Now, State = Action.ACTION_ID_DESACTIVATED, PartitionName = p.Name, Detail = detail };
                             dal.RegiterEvent(h);
                             NotifyNewEvent(h);
                             p.Activated = false;
@@ -301,10 +302,11 @@ namespace DroidvigiaCompat
                         }
                         else
                         {
+                            detail = "Particion Activada:" + "Particion " + p.Name + " Activada";
                             NotifyEvent("Particion Activada", "Particion " + p.Name + " Activada");
                             p.Activated = true;
                             dal.UpdatePartitionState(p.Id, false);
-                            var h = new HistoryItem { Time = DateTime.Now, State = Action.ACTION_ID_ACTIVATED, PartitionName = p.Name, Detail = "" };
+                            var h = new HistoryItem { Time = DateTime.Now, State = Action.ACTION_ID_ACTIVATED, PartitionName = p.Name, Detail = detail };
                             dal.RegiterEvent(h);
                             NotifyNewEvent(h);
                             prefs_model.Ready = false;

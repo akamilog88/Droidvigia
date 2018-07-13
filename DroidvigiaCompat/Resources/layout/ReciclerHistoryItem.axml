@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="25px"
+    android:minHeight="25px"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/partitionLayout"
+    android:descendantFocusability="blocksDescendants">
+    <TextView
+        android:text="07/08/2018"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_history_item_time"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp" />
+    <TextView
+        android:text="Evento:Activacion"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_history_item_Event"
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentLeft="true" />
+    <TextView
+        android:text="Detalle:"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_history_item_Event"
+        android:id="@+id/tv_history_item_details"
+        android:layout_marginLeft="10dp" />
+</RelativeLayout>
