@@ -14,6 +14,7 @@ using Android.Support.V7.App;
 using Android.Support.V4.View;
 using Android.Support.Design.Widget;
 using Android.Support.V4.Widget;
+using Android.Support.V7.Widget;
 
 namespace DroidvigiaCompat
 {
@@ -21,6 +22,7 @@ namespace DroidvigiaCompat
     public class HistoryManagmentActivity : AppCompatActivity, IMenuItemOnMenuItemClickListener
     {
         const int MENU_ITEM_CLEAR_HISTORY= 0;
+        
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -35,7 +37,19 @@ namespace DroidvigiaCompat
                 SupportActionBar.SetHomeButtonEnabled(true);
                 SupportActionBar.SetDisplayShowTitleEnabled(false);
             }
+            DAL dal = new DAL();
+            var recicler = this.FindViewById<RecyclerView>(Resource.Id.recicler_history);
 
+            var layoutManager = new LinearLayoutManager(this, LinearLayoutManager.Vertical, false);
+            layoutManager.ReverseLayout =true;
+            layoutManager.StackFromEnd = true;
+
+            ReciclerHistoryAdapter reciclerHistoryAdapter = new ReciclerHistoryAdapter(this, this.FindViewById<SwipeRefreshLayout>(Resource.Id.swiper_history), dal.GetTop10Events(),recicler);
+                        
+            recicler.HasFixedSize = true;
+            recicler.SetAdapter(reciclerHistoryAdapter);
+            recicler.SetLayoutManager(layoutManager);
+            
             toolbar.NavigationClick += (o, e) => {
                 OnBackPressed();
             };

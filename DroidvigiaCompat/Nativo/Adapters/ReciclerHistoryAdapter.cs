@@ -1,29 +1,58 @@
 ﻿using Android.Support.V7.Widget;
 using Android.Views;
 using System;
+using System.Threading;
+using Android.Content;
 using System.Collections.Generic;
 using Android.Widget;
+using Android.Support.V4.Widget;
 
 namespace DroidvigiaCompat
 {
     public class ReciclerHistoryAdapter : RecyclerView.Adapter
     {
-
+        private Context context;
         private List<HistoryItem> list;
+        private SwipeRefreshLayout swiper;
+
+        private int offset;
         public override int ItemCount => list.Count;
         public event EventHandler<int> ItemClick;
 
-        public ReciclerHistoryAdapter(List<HistoryItem> items)
+        public RecyclerView recycler;
+
+        public ReciclerHistoryAdapter(Context context,SwipeRefreshLayout swiper,List<HistoryItem> items, RecyclerView recycler)
         {
-            list = items;
+            this.context = context;
+            this.swiper = swiper;
+            list = items;            
+            swiper.Refresh += Swiper_Refresh;
+            offset = 0;
+            this.recycler = recycler;
         }
 
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
-            ReciclerHistoryViewHolder vh = holder as ReciclerHistoryViewHolder;
+            ReciclerHistoryViewHolder vh = holder as ReciclerHistoryViewHolder;         
+            vh.Action.Text = "Evento: "+ Action.GetStateName( list[position].State);//item.Time.ToShortDateString() + item.Time.ToShortTimeString();            
+            vh.Time.Text = list[position].Time.ToShortDateString()+ " " + list[position].Time.ToShortTimeString();
             vh.Details.Text = list[position].Detail;
-            vh.Action.Text = Action.GetStateName( list[position].State);//item.Time.ToShortDateString() + item.Time.ToShortTimeString();
-            vh.Time.Text = list[position].Time.ToShortDateString()+ list[position].Time.ToShortTimeString();
+        }
+
+        private void Swiper_Refresh(object sender, EventArgs e)
+        {
+            swiper.Refreshing = true;
+            new System.Threading.Tasks.TaskFactory().StartNew(() => {
+                offset++;
+                DAL dal = new DAL();
+                var next10 = dal.GetTop10Events(offset * 10);               
+                this.list.AddRange(next10);                
+                this.NotifyItemRangeInserted(0, next10.Count);
+                this.NotifyItemRangeChanged(0, next10.Count);
+                recycler.SmoothScrollToPosition(this.list.Count /2); 
+               
+                swiper.Refreshing = false;                  
+            });
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
@@ -32,6 +61,7 @@ namespace DroidvigiaCompat
             ReciclerHistoryViewHolder vh = new ReciclerHistoryViewHolder(itemView, OnClick);
             return vh;
         }
+        
         private void OnClick(int obj)
         {
             if (ItemClick != null)

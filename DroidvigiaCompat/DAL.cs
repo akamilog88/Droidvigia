@@ -192,13 +192,13 @@ namespace DroidvigiaCompat
 			}
 			return res;
 		}
-		public List<HistoryItem> GetTop10Events(){
+		public List<HistoryItem> GetTop10Events(int offset=0){
 			List<HistoryItem> result = new List<HistoryItem> ();
 
 			try{
 				connection.Open();
 				using (var c = connection.CreateCommand ()) {
-					c.CommandText = "SELECT * FROM History ORDER BY Id DESC LIMIT 10" ;
+					c.CommandText =offset > 0? "SELECT * FROM History ORDER BY Id DESC LIMIT 10 OFFSET " + offset: "SELECT * FROM History ORDER BY Id DESC LIMIT 10";
 					c.CommandType = CommandType.Text;				
 					SqliteDataReader reader = c.ExecuteReader ();
 					while(reader.Read()){

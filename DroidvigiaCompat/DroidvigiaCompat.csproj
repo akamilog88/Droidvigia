@@ -18,7 +18,7 @@
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <AndroidSupportedAbis>armeabi%3barmeabi-v7a%3bx86</AndroidSupportedAbis>
     <MandroidI18n />
-    <AndroidUseLatestPlatformSdk>True</AndroidUseLatestPlatformSdk>
+    <AndroidUseLatestPlatformSdk>true</AndroidUseLatestPlatformSdk>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
@@ -51,6 +51,9 @@
     </JavaMaximumHeapSize>
     <JavaOptions>
     </JavaOptions>
+    <AotAssemblies>false</AotAssemblies>
+    <EnableLLVM>false</EnableLLVM>
+    <BundleAssemblies>false</BundleAssemblies>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Data.Sqlite, Version=2.0.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
@@ -182,7 +185,9 @@
     <AndroidResource Include="Resources\layout\HistoryItem.axml" />
     <AndroidResource Include="Resources\layout\NewSchudleLayout.axml" />
     <AndroidResource Include="Resources\layout\PartitionInfoDialog.axml" />
-    <AndroidResource Include="Resources\layout\PartitionItemLayout.axml" />
+    <AndroidResource Include="Resources\layout\PartitionItemLayout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
     <AndroidResource Include="Resources\layout\ZoneInfoDialog.axml" />
     <AndroidResource Include="Resources\layout\Zones.axml" />
     <AndroidResource Include="Resources\layout\HistoryHeader.axml" />
@@ -204,7 +209,9 @@
     <Content Include="Properties\AndroidManifest.xml">
       <SubType>Designer</SubType>
     </Content>
-    <AndroidResource Include="Resources\values\colors.xml" />
+    <AndroidResource Include="Resources\values\colors.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
     <AndroidResource Include="Resources\values\integers.xml" />
     <AndroidResource Include="Resources\values\strings.xml" />
     <AndroidResource Include="Resources\values\styles.xml">

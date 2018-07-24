@@ -83,11 +83,13 @@ namespace DroidvigiaCompat
                     case Resource.Id.nav_planif:
                         ListItemClicked(2);
                         break;
-                    case Resource.Id.nav_salir:
+                    case Resource.Id.nav_history:
                         ListItemClicked(3);
                         break;
+                    case Resource.Id.nav_salir:
+                        ListItemClicked(4);
+                        break;
                 }
-
 
                 drawerLayout.CloseDrawers();
             };
@@ -103,16 +105,11 @@ namespace DroidvigiaCompat
 			Intent i = new Intent (this, typeof(DetectorService));
 			StartService(i);
 		}
-
-
-        int oldPosition = -1;
+    
         private void ListItemClicked(int position)
         {
             //this way we don't load twice, but you might want to modify this a bit.
-            if (position == oldPosition)
-                return;
-
-            oldPosition = position;
+        
 
             Intent i;
 
@@ -156,7 +153,8 @@ namespace DroidvigiaCompat
 			IMenuItem item2= menu.Add (0,1,1,"Zonas");
 			IMenuItem item3= menu.Add (0,2,2,"Planificacion");
             IMenuItem item4 = menu.Add(0, 3, 3, "Historial");
-            IMenuItem item5 = menu.Add(0,4, 4, "Salir");
+            IMenuItem item5 = menu.Add(0,4, 4, "Salir");       
+
             return base.OnCreateOptionsMenu (menu);
 		}
 
