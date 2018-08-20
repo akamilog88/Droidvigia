@@ -1,10 +1,12 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2003
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DroidvigiaCompat", "DroidvigiaCompat\DroidvigiaCompat.csproj", "{1E2D730C-56A7-4D16-A742-58BEC46AAD7C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JDtmfBindingLib", "..\DroidToneDecoder JavaInline\JDtmfBindingLib\JDtmfBindingLib.csproj", "{A5ECE9F0-B826-4EEB-9100-B1C920564BDB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VigiaKeyManagerMovil", "VigiaKeyManagerMovil\VigiaKeyManagerMovil.csproj", "{FE99B9DA-C297-46B2-AC15-BB953DB24E3A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,6 +24,12 @@ Global
 		{A5ECE9F0-B826-4EEB-9100-B1C920564BDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5ECE9F0-B826-4EEB-9100-B1C920564BDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A5ECE9F0-B826-4EEB-9100-B1C920564BDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE99B9DA-C297-46B2-AC15-BB953DB24E3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE99B9DA-C297-46B2-AC15-BB953DB24E3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE99B9DA-C297-46B2-AC15-BB953DB24E3A}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{FE99B9DA-C297-46B2-AC15-BB953DB24E3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE99B9DA-C297-46B2-AC15-BB953DB24E3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE99B9DA-C297-46B2-AC15-BB953DB24E3A}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -46,8 +46,8 @@ namespace DroidvigiaCompat
 					n_mngr.Cancel (ALARM_NOTIFICATION_ID);
 					//PendingIntent pendingIntent = PendingIntent.GetActivity(this, 0, notificationIntent, 0);
 					n.Defaults |= NotificationDefaults.All; 
-					n.Flags |= NotificationFlags.Insistent;
-					n.SetLatestEventInfo (context, "Alarma!", message, null);
+					n.Flags |= NotificationFlags.OnlyAlertOnce | NotificationFlags.AutoCancel;
+                    n.SetLatestEventInfo (context, "Alarma!", message, null);
 					n_mngr.Notify (ALARM_NOTIFICATION_ID, n);
 				}
 				List<String> l_nums = prefmodel.notificationNumbers;
@@ -60,7 +60,7 @@ namespace DroidvigiaCompat
 						prefmodel.Call_Phone_Index++;
 
 					Intent callIntent = new Intent (Intent.ActionCall, Android.Net.Uri.Parse ("tel:"+current_number));
-					//callIntent.AddFlags (ActivityFlags.FromBackground);
+					callIntent.AddFlags (ActivityFlags.FromBackground);
 					callIntent.AddFlags (ActivityFlags.NewTask);
 					bool call_done = false;
 					//Message Portion				

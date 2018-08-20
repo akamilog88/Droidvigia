@@ -60,10 +60,13 @@ namespace DroidvigiaCompat
         protected override void OnPause()
         {
             base.OnPause();
-            var service = Binder.GetService();
-            service.NewKey -= OnKey;
-            service.NewToken -= OnToken;
-            UnbindService(connector);
+            if (Binder != null)
+            {
+                var service = Binder.GetService();
+                service.NewKey -= OnKey;
+                service.NewToken -= OnToken;
+                UnbindService(connector);
+            }
         }
     }
 }

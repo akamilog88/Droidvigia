@@ -9,7 +9,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace DroidVIGIA
+namespace DroidvigiaCompat
 {
 	[BroadcastReceiver]
 	[IntentFilter(new string[]{"DroidVigia.DroidVigia.DroidVigia.SchudledCall"})]

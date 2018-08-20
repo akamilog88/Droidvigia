@@ -108,58 +108,65 @@ namespace DroidvigiaCompat
 				tmgr.Listen (phone_state_listener, PhoneStateListenerFlags.None);
 			var shared_prefs = Global.GetSharedPreferences (this);
 			shared_prefs.UnregisterOnSharedPreferenceChangeListener (this);
-			if(notification_timer!=null){
+
+            //var audio_mngr = (AudioManager)GetSystemService(Context.AudioService);
+            //AudioFocusRequest result = audio_mngr.AbandonAudioFocus(this);
+
+            if (notification_timer!=null){
 				notification_timer.Dispose ();
 				notification_timer=null;					
 			}		
 			NotificationManager n_mngr = (NotificationManager)GetSystemService (Service.NotificationService);
 			n_mngr.CancelAll ();
             Detecting = false;
-			initialized = false;
-		}
+            //if(_jdtmfController!=null)
+            //    _jdtmfController.Dispose();
+            initialized = false;
+        }
 
 		public void ForceStop(){
 			Realese ();
-			StopSelf ();
+            StopForeground(true);
+			StopSelf ();            
 		}
 		public void RestartDetect(){
-            //StopDetect ();
-            //StartDetect ();
-            Realese();
-            Init();
+            StopDetect ();
+            StartDetect ();
+            //Realese();
+            //Init();
 		}
 
 		private void Init(){
 			if (initialized) {
 				Realese ();
 			}
-			ISharedPreferences shared_prefs = Global.GetSharedPreferences (this);
+            tokenParser = new DTMFTokenParser();
+
+            ISharedPreferences shared_prefs = Global.GetSharedPreferences (this);
 			shared_prefs.RegisterOnSharedPreferenceChangeListener (this);
 			prefs_model = new PreferencesModel (shared_prefs);
-			if (prefs_model.Notificando) {
+
+            var audio_mngr = (AudioManager)GetSystemService(Context.AudioService);
+            AudioFocusRequest result = audio_mngr.RequestAudioFocus(this, Stream.Music, AudioFocus.Gain);
+
+            if (prefs_model.Notificando) {
 				Notificando = true;
 			}
 			//modoComplemento = prefs_model.Modo_Complemento;
-			var audio_mngr = (AudioManager)GetSystemService (Context.AudioService);
-			audio_mngr.RequestAudioFocus (this, Stream.Music, AudioFocus.Gain);
-
+			
 			TelephonyManager tmgr = (TelephonyManager) this.GetSystemService(Service.TelephonyService);
 			if (phone_state_listener == null)
 				phone_state_listener = new MyPhoneStateListener (this);
 			tmgr.Listen (phone_state_listener, PhoneStateListenerFlags.CallState);
 			initialized = true;
-		
-			Schudled_CallBack = prefs_model.Schudled_Call;
+		    
+			Schudled_CallBack = prefs_model.Schudled_Call;           
 
-            if (_jdtmfController == null)
-                _jdtmfController = new Controller(this);
-
-            if ((prefs_model.Teclado_Enabled || prefs_model.Ready) && !Detecting){		
-				StartDetect ();
-			}
-
-            tokenParser = new DTMFTokenParser();
-            tokenParser.NewToken += OnNewToken;
+            if ((prefs_model.Teclado_Enabled || prefs_model.Ready) && !Detecting){
+                new System.Threading.Timer((o) => {
+                    StartDetect();
+                }, null, 2000, -1);				
+			}         
 
         }
         public void StartDetect()
@@ -173,15 +180,27 @@ namespace DroidvigiaCompat
         #region JDTMF Controller START/STOP
         public void OnKey(char p0)
         {
-
-            tokenParser.Digest(DTMFDetectedArgs.ToneCodeFromKey(p0));
-            if (NewKey != null)
-                NewKey.BeginInvoke(null, new DTMFDetectedArgs(p0, 0.064),null,null);
+            if (Detecting)
+            {
+                tokenParser.Digest(DTMFDetectedArgs.ToneCodeFromKey(p0));
+                if (NewKey != null)
+                {
+                    try
+                    {
+                        NewKey.BeginInvoke(null, new DTMFDetectedArgs(p0, 0.064), null, null);
+                    }
+                    catch (Exception e) { }
+                }
+            }
         }
 
         public void Start()
         {
-            if (!_jdtmfController.IsStarted) {
+            _jdtmfController = new Controller(this);
+
+            if (!_jdtmfController.IsStarted) {              
+
+                tokenParser.NewToken += OnNewToken;
                 _jdtmfController.ChangeState();
                 Detecting = true;
             }               
@@ -189,8 +208,11 @@ namespace DroidvigiaCompat
 
         public void Stop()
         {
+            if (_jdtmfController == null)
+                return;
             if (_jdtmfController.IsStarted)
             {
+                tokenParser.NewToken -= OnNewToken;
                 _jdtmfController.ChangeState();
                 Detecting = false;
             }
@@ -235,7 +257,36 @@ namespace DroidvigiaCompat
         #endregion
         public void OnAudioFocusChange (AudioFocus focusChange)
 		{
-
+            if (prefs_model.Teclado_Enabled || prefs_model.Ready)
+            {
+                switch (focusChange)
+                {
+                    case AudioFocus.Loss:
+                        StopDetect();
+                        break;
+                    case AudioFocus.LossTransient:
+                        StopDetect();
+                        break;
+                    case AudioFocus.LossTransientCanDuck:
+                        StopDetect();
+                        break;
+                    case AudioFocus.Gain:
+                        StartDetect();
+                        break;
+                    case AudioFocus.GainTransient:
+                        StartDetect();
+                        break;
+                    case AudioFocus.GainTransientExclusive:
+                        StartDetect();
+                        break;
+                    case AudioFocus.GainTransientMayDuck:
+                        StartDetect();
+                        break;
+                    default:
+                        StopDetect();
+                        break;
+                }
+            }
 		}
         private void OnNewToken(object sender, DTMFTokenBuildedEventArgs edt)
         {
@@ -350,7 +401,13 @@ namespace DroidvigiaCompat
                 }
             }
             if (NewToken != null)
-                NewToken.BeginInvoke(null, edt, null, null);
+            {
+                try
+                {
+                    NewToken.BeginInvoke(null, edt, null, null);
+                }
+                catch { }
+            }
         }
 
         #region implemented abstract members of Service
@@ -377,7 +434,7 @@ namespace DroidvigiaCompat
 		public override void OnDestroy ()
 		{
 			base.OnDestroy ();
-			StopDetect ();
+			//StopDetect ();
 			Realese ();
 		}
 		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId) {
@@ -386,9 +443,8 @@ namespace DroidvigiaCompat
 			// For each start request, send a message to start a job and deliver the
 			// start ID so we know which request we're stopping when we finish the job
 			// If we get killed, after returning from here, restart
-			tone_detected_reciver = new ToneDetectedReciver ();
-
-			notification_mngr = (NotificationManager)GetSystemService (Context.NotificationService);
+			
+            notification_mngr = (NotificationManager)GetSystemService (Context.NotificationService);
 			notification = new Notification(Resource.Drawable.vigia_icon2,"Servicio de deteccion en ejecucion.");
 			Intent notificationIntent = new Intent(this, typeof(MainActivity));
 			//PendingIntent pendingIntent = PendingIntent.GetActivity(this, 0, notificationIntent, 0);
@@ -539,31 +595,43 @@ namespace DroidvigiaCompat
 						dal.ActivateAllPartitions ();
 					} else {
 						dal.DesactivateAllPartitions ();
-					}			
-					Intent i = new Intent (context, typeof(DetectorService));
+					}
+
+                    SchudlerManager s_mngr = new SchudlerManager(context);
+                    s_mngr.RegisterRestartServiceSchudle();
+
+                    Intent i = new Intent (context, typeof(DetectorService));
 					if(Binder!=null){
 						var service= Binder.GetService ();
 						service.ForceStop();
-					}
-					SchudlerManager s_mngr = new SchudlerManager (context);
-					s_mngr.RegisterRestartServiceSchudle ();
+					}					
 				}
-				prefmodel.Last_Call_State = state;
+                //if (Binder != null)
+                //{
+                //    var service = Binder.GetService();
+                //    service.Stop();
+                //}
+                prefmodel.Last_Call_State = state;
 			}
 			//Device call state: Off-hook. At least one call exists that is dialing, active, or on hold, and no calls are ringing or waiting. 
 			if(state== CallState.Offhook){
 				prefmodel.Last_Call_State = state;
-			}
+                //if (Binder != null)
+                //{
+                //    var service = Binder.GetService();
+                //    service.Stop();
+                //}
+            }
 			//Device call state: No activity. 
 			if(state== CallState.Idle){
 				if (prefmodel.Last_Call_State == CallState.Offhook) {
 					//Intent i = new Intent (context, typeof(DetectorService));
 					//context.StopService (i);					
 					//context.StartService(i);
-					if(Binder!=null){
-						var service= Binder.GetService ();
-						service.RestartDetect ();
-					}
+					//if(Binder!=null){
+					//	var service= Binder.GetService ();
+					//	service.Start();
+					//}
 				}
 				prefmodel.Last_Call_State = state;
 			}

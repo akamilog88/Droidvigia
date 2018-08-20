@@ -135,8 +135,9 @@ namespace DroidvigiaCompat
                 case 4:
                     var service = Binder.GetService();
                     service.ForceStop();
-                    Finish();
-                    isExiting = true;
+                    //FinishAndRemoveTask();
+                    this.FinishAffinity();
+                    isExiting = true;                    
                     break;
             }
             
